@@ -1,34 +1,249 @@
+/* ==========================================================================
+   Mood — palette-driven Obsidian theme
+   Every palette defines 7 tokens; Obsidian variables are mapped once below.
+   ========================================================================== */
+
+/* @settings
+
+name: Mood
+id: mood-theme
+settings:
+    -
+        id: palette-heading
+        title: Palette
+        type: heading
+        level: 1
+        collapsed: false
+    -
+        id: palette
+        title: Colour scheme
+        description: Pick a palette. Each one sets a 4-step ramp, two accents and a light tone.
+        type: class-select
+        allowEmpty: false
+        default: pal-bardon
+        options:
+            -
+                label: Bardon
+                value: pal-bardon
+            -
+                label: Ember
+                value: pal-ember
+            -
+                label: Tide
+                value: pal-tide
+            -
+                label: Dusk
+                value: pal-dusk
+    -
+        id: accent-swap
+        title: Use the darker accent
+        description: Swap the primary accent for its darker counterpart.
+        type: class-toggle
+        default: false
+    -
+        id: typography-heading
+        title: Typography
+        type: heading
+        level: 1
+        collapsed: true
+    -
+        id: base-font-size
+        title: Base font size
+        type: variable-number-slider
+        default: 16
+        min: 12
+        max: 22
+        step: 1
+        format: px
+    -
+        id: line-width
+        title: Editor line width
+        type: variable-number-slider
+        default: 700
+        min: 500
+        max: 1100
+        step: 20
+        format: px
+
+*/
+
+/* --------------------------------------------------------------------------
+   1. Base tokens
+   Accents resolve from the active palette; Style Settings feeds the sliders.
+   -------------------------------------------------------------------------- */
+
 body {
-	--radius-s: 0px;
-	--radius-m: 0px;
-	--radius-l: 0px;
-	--input-radius: 0px;
-	--tab-radius-active: 0px;
-	--checkbox-radius: 0px;
-	--toggle-radius: 0px;
-	--toggle-thumb-radius: 0px;
-	--slider-thumb-radius: 0px;
+	--accent: var(--pal-a1);
+	--accent-alt: var(--pal-a2);
+	--base-font-size: 16px;
+	--line-width: 700px;
+	--font-text-size: var(--base-font-size);
+	--file-line-width: var(--line-width);
 }
 
-.workspace-tab-header.is-active::before, .workspace-tab-header.is-active::after {
-	display: none;
+body.accent-swap {
+	--accent: var(--pal-a2);
+	--accent-alt: var(--pal-a1);
 }
 
-svg * {
-	stroke-linecap: square;
-	stroke-linejoin: miter;
-	rx: 0;
-	ry: 0;
+/* --------------------------------------------------------------------------
+   2. Palette definitions
+   --pal-1 -> --pal-4 : dark-to-light ramp
+   --pal-a1           : primary accent
+   --pal-a2           : darker counterpart accent
+   --pal-light        : lightest tone
+   -------------------------------------------------------------------------- */
+
+body.pal-bardon {
+	--pal-1: #14251f;
+	--pal-2: #1f3a34;
+	--pal-3: #3e7191;
+	--pal-4: #5c9a87;
+	--pal-a1: #e9c46a;
+	--pal-a2: #c4632b;
+	--pal-light: #f2ede4;
 }
 
-.menu {
-	padding: var(--size-2-1);
+body.pal-ember {
+	--pal-1: #221816;
+	--pal-2: #4a2e28;
+	--pal-3: #8c4b3d;
+	--pal-4: #d4a883;
+	--pal-a1: #6e7f6a;
+	--pal-a2: #4c5a48;
+	--pal-light: #f4ebe0;
 }
 
-.menu-item {
-	padding: var(--size-4-1) var(--size-4-2);
+body.pal-tide {
+	--pal-1: #10201f;
+	--pal-2: #1e3b3a;
+	--pal-3: #34655f;
+	--pal-4: #8fbab0;
+	--pal-a1: #d9b36b;
+	--pal-a2: #a8843f;
+	--pal-light: #eef3ef;
 }
 
-.menu-separator {
-	margin: var(--size-2-1) calc(var(--size-2-1) * -1);
+body.pal-dusk {
+	--pal-1: #1e1620;
+	--pal-2: #3a2a3e;
+	--pal-3: #6e5270;
+	--pal-4: #c5a6b0;
+	--pal-a1: #e3b08b;
+	--pal-a2: #b5825e;
+	--pal-light: #f5f0ee;
+}
+
+/* Fallback so the theme still renders if Style Settings isn't installed */
+body:not([class*="pal-"]) {
+	--pal-1: #14251f;
+	--pal-2: #1f3a34;
+	--pal-3: #3e7191;
+	--pal-4: #5c9a87;
+	--pal-a1: #e9c46a;
+	--pal-a2: #c4632b;
+	--pal-light: #f2ede4;
+}
+
+/* --------------------------------------------------------------------------
+   3. Map palette tokens onto Obsidian's variables
+   -------------------------------------------------------------------------- */
+
+.theme-dark {
+	--background-primary: var(--pal-1);
+	--background-primary-alt: color-mix(in srgb, var(--pal-1) 88%, var(--pal-2));
+	--background-secondary: var(--pal-2);
+	--background-secondary-alt: color-mix(in srgb, var(--pal-2) 80%, var(--pal-1));
+	--background-modifier-border: color-mix(in srgb, var(--pal-3) 40%, transparent);
+	--background-modifier-hover: color-mix(in srgb, var(--pal-3) 22%, transparent);
+	--background-modifier-active-hover: color-mix(in srgb, var(--accent) 20%, transparent);
+	--text-normal: var(--pal-light);
+	--text-muted: var(--pal-4);
+	--text-faint: var(--pal-3);
+	--text-on-accent: var(--pal-1);
+	--text-accent: var(--accent);
+	--text-accent-hover: var(--accent-alt);
+	--text-selection: color-mix(in srgb, var(--accent) 28%, transparent);
+	--text-highlight-bg: color-mix(in srgb, var(--accent) 35%, transparent);
+	--interactive-normal: var(--pal-2);
+	--interactive-hover: var(--pal-3);
+	--interactive-accent: var(--accent);
+	--interactive-accent-hover: var(--accent-alt);
+	--code-background: color-mix(in srgb, var(--pal-2) 70%, var(--pal-1));
+	--code-normal: var(--pal-4);
+	--blockquote-border-color: var(--accent);
+	--hr-color: color-mix(in srgb, var(--pal-3) 45%, transparent);
+	--link-color: var(--accent);
+	--link-external-color: var(--pal-4);
+	--tag-background: color-mix(in srgb, var(--accent) 18%, transparent);
+	--tag-color: var(--accent);
+	--checkbox-color: var(--accent);
+}
+
+.theme-light {
+	--background-primary: var(--pal-light);
+	--background-primary-alt: color-mix(in srgb, var(--pal-light) 92%, var(--pal-4));
+	--background-secondary: color-mix(in srgb, var(--pal-light) 88%, var(--pal-4));
+	--background-secondary-alt: color-mix(in srgb, var(--pal-light) 78%, var(--pal-4));
+	--background-modifier-border: color-mix(in srgb, var(--pal-3) 30%, transparent);
+	--background-modifier-hover: color-mix(in srgb, var(--pal-4) 25%, transparent);
+	--text-normal: var(--pal-1);
+	--text-muted: var(--pal-3);
+	--text-faint: color-mix(in srgb, var(--pal-3) 65%, var(--pal-light));
+	--text-on-accent: var(--pal-light);
+	--text-accent: var(--accent-alt);
+	--text-accent-hover: var(--accent);
+	--text-selection: color-mix(in srgb, var(--accent) 30%, transparent);
+	--text-highlight-bg: color-mix(in srgb, var(--accent) 40%, transparent);
+	--interactive-normal: color-mix(in srgb, var(--pal-light) 85%, var(--pal-4));
+	--interactive-hover: var(--pal-4);
+	--interactive-accent: var(--accent-alt);
+	--interactive-accent-hover: var(--accent);
+	--code-background: color-mix(in srgb, var(--pal-light) 82%, var(--pal-4));
+	--code-normal: var(--pal-2);
+	--blockquote-border-color: var(--accent-alt);
+	--hr-color: color-mix(in srgb, var(--pal-3) 35%, transparent);
+	--link-color: var(--accent-alt);
+	--link-external-color: var(--pal-3);
+	--tag-background: color-mix(in srgb, var(--accent) 25%, transparent);
+	--tag-color: var(--accent-alt);
+	--checkbox-color: var(--accent-alt);
+}
+
+/* --------------------------------------------------------------------------
+   4. Targeted tweaks — extend from here
+   -------------------------------------------------------------------------- */
+
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3 {
+	color: var(--accent);
+}
+
+.markdown-rendered h2 {
+	border-bottom: 1px solid var(--background-modifier-border);
+	padding-bottom: 0.2em;
+}
+
+.markdown-rendered blockquote {
+	border-left-width: 3px;
+	background: color-mix(in srgb, var(--accent) 8%, transparent);
+	border-radius: 0 4px 4px 0;
+}
+
+.workspace-tab-header.is-active {
+	box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.graph-view.color-fill {
+	color: var(--pal-4);
+}
+
+.graph-view.color-fill-focused,
+.graph-view.color-circle {
+	color: var(--accent);
+}
+
+.graph-view.color-line {
+	color: color-mix(in srgb, var(--pal-3) 55%, transparent);
 }
